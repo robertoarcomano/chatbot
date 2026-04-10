@@ -35,7 +35,7 @@ texts.append("3 giorni fa nevicava")
 db = Chroma.from_texts(texts=texts, embedding=emb)
 
 # 4. Query
-query = "Cos'è Ollama?"
+query = "Com'è il tempo oggi?"
 docs = db.similarity_search(query, k=1)
 
 # 5. LLM locale
