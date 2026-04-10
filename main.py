@@ -1,14 +1,24 @@
+import sys
+
+
+if len(sys.argv) < 2:
+    print("Uso: python main.py <query>")
+    sys.exit(1)
+
+
 import os
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_HUB_OFFLINE"] = "1"
-
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
-from langchain_community.llms import Ollama
+# from langchain_community.llms import Ollama
+from langchain_ollama import OllamaLLM
 from sentence_transformers import SentenceTransformer
-SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+from transformers import logging
 import subprocess
 
+
+logging.set_verbosity_error()
 def ensure_model(model="llama3"):
     try:
         # verifica se esiste
@@ -41,11 +51,11 @@ texts.append("3 giorni fa nevicava")
 db = Chroma.from_texts(texts=texts, embedding=emb)
 
 # 4. Query
-query = "Com'è il tempo oggi?"
+query = sys.argv[1]
 docs = db.similarity_search(query, k=1)
 
 # 5. LLM locale
-llm = Ollama(model="llama3")
+llm = OllamaLLM(model="llama3")
 
 # 6. Risposta
 response = llm.invoke(docs[0].page_content)
